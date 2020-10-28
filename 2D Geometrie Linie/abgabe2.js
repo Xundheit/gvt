@@ -31,9 +31,14 @@ var canvas = document.getElementById('geometrie');
 			for(var i = 0; i <= 28; i++){
 			  var degree_offset = i * 15.0;
 			  var radian_offset = degree_offset * (Math.PI / 180.0);
-			  var x_pos = 3* Math.cos(radian_offset);
-			  var y_pos = 3* Math.sin(radian_offset);
-
+			  
+			  if(isEven(i)){
+				  var x_pos = 3* Math.cos(radian_offset);
+				  var y_pos = 3* Math.sin(radian_offset);
+			  } else {
+				  var x_pos = 2* Math.cos(radian_offset);
+				  var y_pos = 2* Math.sin(radian_offset);
+			  }
 			  vertices.push(x_pos);
 			  vertices.push(y_pos);
 			  vertices.push(0,0)
@@ -53,5 +58,10 @@ var canvas = document.getElementById('geometrie');
             gl.drawArrays(gl.LINE_STRIP, 0, 56);
 
   }
-  
+function isEven(value) {
+	if (value%2 == 0)
+		return true;
+	else
+		return false;
+}
 InitDemo();
