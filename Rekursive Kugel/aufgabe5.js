@@ -145,6 +145,12 @@ var gl;
                         sphere = new Sphere(recursionDepth);
                     }
                     break;
+				case('W'):
+					if(isWireFrameEnabled){
+						isWireFrameEnabled = false;
+					} else {
+						isWireFrameEnabled = true;
+					}
 			}
 		};
 	}
