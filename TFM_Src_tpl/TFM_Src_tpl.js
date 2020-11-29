@@ -10,6 +10,7 @@ var app = ( function() {
 	var models = [];
 	var leftHalfSpin = false;
 	var rightHalfSpin = false
+	var orbitTranslate;
 
 	// Model that is target for user input.
 	var interactiveModel;
@@ -134,12 +135,13 @@ var app = ( function() {
 	function initModels() {
 		// fillstyle
 		var fs = "fillwireframe";
-		createModel("torus", fs, [0, 0, 0], [0, 0, 0], [1, 1, 1]);
-		createModel("sphere", fs, [0, 0, 0], [0, 0, 0], [0.3, 0.3, 0.3]);
-		createModel("sphere", fs, [-1, 0, -1], [0, 0, 0], [0.3, 0.3, 0.3]);
-		createModel("sphere", fs, [2, 0, 0], [0, 0, 0], [0.3, 0.3, 0.3]);
-		createModel("sphere", fs, [-1, 0, 1], [0, 0, 0], [0.3, 0.3, 0.3]);
+		createModel("torus", fs, [0, 0, 0], [0, 0, 0], [2, 2, 2]);
 		createModel("plane", "wireframe",  [0, -0.7, 0], [0, 0, 0], [1, 1, 1]);
+		createModel("sphere", fs, [0, 0, 0], [0, 0, 0], [0.2, 0.2, 0.2]);
+		createModel("sphere", fs, [-1, 0, -1], [0, 0, 0], [0.2, 0.2, 0.2]);
+		createModel("sphere", fs, [2, 0, 0], [0, 0, 0], [0.2, 0.2, 0.2]);
+		createModel("sphere", fs, [-1, 0, 1], [0, 0, 0], [0.2, 0.2, 0.2]);
+		
 	
 		// Select one model that can be manipulated interactively by user.
 		interactiveModel = models[0];
@@ -176,54 +178,7 @@ var app = ( function() {
 		model.mvMatrix = mat4.create();
 	}
 	
-	function spinSpheres() {
-		
-		if(!leftHalfSpin){
-			models[1].translate[0] += 0.1;
-			models[3].translate[0] -= 0.1;
-			models[2].translate[2] += 0.1;
-			models[4].translate[2] -= 0.1;
-
-			if (models[1].translate[0] > 1.95) {
-				models[1].translate = [2, 0, 0]
-				models[2].translate = [-1, 0, 1]
-				models[3].translate = [0, 0, 0]
-				models[4].translate = [-1, 0, -1]		
-				leftHalfSpin = true;
-			}
-		} else {
-			models[1].translate[0] -= 0.1;
-			models[3].translate[0] += 0.1;
-			models[2].translate[2] -= 0.1;
-			models[4].translate[2] += 0.1;
-			if (models[1].translate[0] < 0.1) {
-				models[1].translate[0] = 0;
-				models[3].translate[0] = 2;
-				models[2].translate[2] = -1;
-				models[4].translate[2] = 1;
-				leftHalfSpin = false;
-			}
-		}
-		
-		if(!rightHalfSpin){
-			models[1].translate[2] += 0.1;
-			models[3].translate[2] -= 0.1;
-			models[2].translate[0] += 0.1;
-			models[4].translate[0] -= 0.1;
-			
-			if (models[1].translate[2] > 0.9) {
-				rightHalfSpin = true;
-			}
-		} else {
-			models[1].translate[2] -= 0.1;
-			models[3].translate[2] += 0.1;
-			models[2].translate[0] -= 0.1;
-			models[4].translate[0] += 0.1;
-			if (models[1].translate[2] < -0.9) {
-				rightHalfSpin = false;
-			}
-		}
-	}
+	
 
 	/**
 	 * Init data and buffers for model object.
@@ -279,9 +234,16 @@ var app = ( function() {
 		window.onkeydown = function(evt) {
 			var key = evt.which ? evt.which : evt.keyCode;
 			var c = String.fromCharCode(key);
+
 			// console.log(evt);
 			// Use shift key to change sign.
 			var sign = evt.shiftKey ? -1 : 1;
+			
+			if (!orbitTranslate) {
+				orbitTranslate = deltaRotate * 2;
+				torusRotate = orbitTranslate;
+			}
+			const r = 1;
 
 			// Change projection of scene.
 			switch(c) {
@@ -332,10 +294,23 @@ var app = ( function() {
                 case('Z'):
                     interactiveModel.rotate[2] += sign * deltaRotate;
                     break;
-					case('K'):
-					spinSpheres();
-					interactiveModel.rotate[0] += deltaRotate*3.6;
-					interactiveModel.rotate[1] += deltaRotate*3.6;
+				case('K'):
+					orbitTranslate += sign * deltaRotate;
+
+                    for (var i = 2; i < models.length; i+=2) {
+                        var radian = orbitTranslate + (i - 2) * Math.PI / 2;
+                        models[i].translate[0] = Math.cos(radian) * r + r;
+                        models[i].translate[2] = Math.sin(radian) * r;
+                    }
+					
+					for (var i = 3; i < models.length; i+=2) {
+                        var radian = orbitTranslate + (i - 2) * Math.PI / 2;
+                        models[i].translate[0] = -(Math.cos(radian) * r + r);
+                        models[i].translate[2] = - (Math.sin(radian) * r);
+                    }
+					interactiveModel.rotate[0] += sign * deltaRotate;
+					interactiveModel.rotate[1] -= sign * deltaRotate;
+				
 					break;
             }
 			
