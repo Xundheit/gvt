@@ -1,0 +1,51 @@
+* {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 12px;
+	font-color: #242423;
+	text-align: center;
+}
+
+body {
+	background-color: #cfdbd5;
+}
+
+h1 {
+font-family: 'Staatliches', cursive;
+font-size: 4rem;
+}
+
+h2 {
+	font-size: 2rem;
+	font-weight: bold;
+}
+
+h3 {
+	font-size: 1.5rem;
+}
+
+.content {
+	margin: auto;
+	max-width: 800px;
+	width: 70%;
+	background-color: #e8eddf;
+	padding: 1em;
+}
+
+p.copyright {
+	font-size: 0.7rem;
+	text-align: right;
+}
+
+p.copyright a {
+	font-size: 0.7rem;
+	color: #242423;
+}
+
+#interactive {
+	padding: 1em;
+	background-color: #fff;
+	display:flex;
+	justify-content: space-around;
+	align-items: center;
+	margin-top: 2em;
+}
