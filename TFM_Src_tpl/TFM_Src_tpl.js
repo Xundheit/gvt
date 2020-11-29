@@ -334,6 +334,8 @@ var app = ( function() {
                     break;
 					case('K'):
 					spinSpheres();
+					interactiveModel.rotate[0] += deltaRotate*3.6;
+					interactiveModel.rotate[1] += deltaRotate*3.6;
 					break;
             }
 			
